@@ -1,7 +1,7 @@
-var mongoose = require('mongoose');
+//var mongoose = require('mongoose');
 var bcrypt = require('bcryptjs');
 
-mongoose.connect('mongodb://localhost:27017/attendancetracker');
+var {mongoose}= require('./db')
 
 var db = mongoose.connection;
 

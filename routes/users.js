@@ -6,9 +6,12 @@ var upload =multer({dest: './uploads'});
 var expressValidator=require('express-validator'); 
 var flash = require('connect-flash');
 var passport = require('passport');
+var date = require('date-and-time');
 var LocalStrategy = require('passport-local').Strategy;
 
 var User = require('../models/user');
+var attendanceIN = require('../models/attendance');
+var attendanceOUT = require('../models/attendance');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -21,16 +24,26 @@ router.get('/register', function(req, res, next) {
    req.session.errors = null;
 });
 
+var now = new Date();
+currentDate= date.format(now, 'ddd MMM DD YYYY');   
+currentTime= date.format(now, 'hh:mm A [GMT]Z');
+
 router.get('/login', function(req, res, next) {
   res.render('login',{pageTitle:'Login'});
 });
 
-
-
+var now = new Date();
 router.post("/login",
  passport.authenticate('local',{failurRedirect:'/users/login', failureFlash: 'invalid username or password'}),
  function(req,res){
- // res.redirect('/users/' + req.user.username);
+ var _newAttendancetrack = new attendanceIN({
+ currentDate: date.format(now, 'ddd MMM DD YYYY'),   
+  currentTime: date.format(now, 'hh:mm A [GMT]Z'),
+    });
+    attendanceIN.AttendanceInTime(_newAttendancetrack,function(err, AttendanceTrack) {
+      if(err) throw err;
+      console.log(AttendanceTrack);   
+    });  
   req.flash('success','you are now login in');
   res.redirect('/');
  });
@@ -116,12 +129,23 @@ if(errors){
 }
  });
 
-router.get('/logout', function(req, res){
-  req.logout();
+//var now1 = new Date();
+router.post('/logout', function(req, res){
+  
+// var _newAttendancetrack = new attendanceOUT({
+//  currentDate: date.format(now1, 'ddd MMM DD YYYY'),   
+//   currentTime: date.format(now1, 'hh:mm A [GMT]Z')
+//     }); 
+//     attendanceOUT.AttendanceOutTime(_newAttendancetrack,function(err, AttendanceTrack) {
+//       if(err) throw err;
+//       console.log(AttendanceTrack);
+//     });
+//   req.logout();
   req.flash('success','you are now logout');
   res.redirect('/users/login');
    
 console.log("logout");
 });
+
 
 module.exports = router;

@@ -2,6 +2,7 @@ var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 //var ejs= require('ejs');
+var date = require('date-and-time');
 var hbs= require('hbs');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
@@ -17,6 +18,7 @@ var bcrypt = require('bcryptjs');
 var mongo = require('mongodb');
 var mongoose = require('mongoose');
 
+//var port = process.env.PORT || 3000;
 var db= mongoose.connection;
 
 var indexRouter = require('./routes/index');
@@ -82,10 +84,18 @@ app.use(function (req, res, next) {
   next();
 });
 
-app.get('*', function(req, res,next){
-	res.locals.user = req.user || null;
-	next();
-});
+// app.get('*', function(req, res,next){
+// 	res.locals.user = req.user || null;
+// 	next();
+// });
+
+//date and time
+var now = new Date();
+
+date.format(now, 'ddd MMM DD YYYY');        // => 'Fri Jan 02 2015'
+date.format(now, 'hh:mm A [GMT]Z');         // => '11:14 p.m. GMT-0800'
+
+
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
